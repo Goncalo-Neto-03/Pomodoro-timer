@@ -93,9 +93,9 @@
     let interval = null;
 
     function startTimer() {
-      if (interval) return; // evita múltiplos intervalos
+      if (interval) return; 
 
-      // Se o timer estiver zerado, pega os valores dos inputs
+      // Se o timer estiver a zeros, pega nos valores dos inputs
       if (totalSeconds === 0) {
         const hours = parseInt(document.getElementById("inputHours").value) || 0;
         const minutes = parseInt(document.getElementById("inputMinutes").value) || 0;
