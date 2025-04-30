@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <title>Pomodoro do Neto</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      margin-bottom: 20px;
+      color: black;
+      outline-style: dotted;
+    }
+    #timer {
+      font-size: 60px;
+      margin: 20px 0;
+    }
+    input[type="number"], input[type="text"] {
+      padding: 5px;
+    }
+    input[type="number"] {
+      width: 50px;
+      text-align: center;
+    }
+    button {
+      padding: 8px 14px;
+      margin: 5px;
+    }
+    .tasks {
+      max-width: 400px;
+      margin: 20px auto;
+      text-align: center;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 8px 0;
+    }
+
+    h2 {
+
+        color: rgb(136, 2, 2);
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>Pomodoro + Tarefas</h1>
+
+  <div id="timer">00:00:00</div>
+
+  <div>
+    <label>Horas: </label>
+    <input type="number" id="inputHours" value="0" min="0">
+    <label>Minutos: </label>
+    <input type="number" id="inputMinutes" value="0" min="0">
+  </div>
+
+  <br>
+
+  <button onclick="startTimer()">Iniciar</button>
+  <button onclick="pauseTimer()">Pausar</button>
+  <button onclick="resetTimer()">Resetar</button>
+
+  <br>
+  <br>
+
+  <div class="tasks">
+    <h2 class = "red-text" color = red;>Minhas Tarefas</h2>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-image: linear-gradient(red, yellow);
+          text-align: center;
+          padding: 200px;
+        }
+    </style>
+    <input type="text" id="newTask" placeholder="Nova tarefa">
+    <button onclick="addTask()">Adicionar</button>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    // Timer
+    let totalSeconds = 0;
+    let interval = null;
+
+    function startTimer() {
+      if (interval) return; // evita múltiplos intervalos
+
+      // Se o timer estiver zerado, pega os valores dos inputs
+      if (totalSeconds === 0) {
+        const hours = parseInt(document.getElementById("inputHours").value) || 0;
+        const minutes = parseInt(document.getElementById("inputMinutes").value) || 0;
+
+        totalSeconds = (hours * 3600) + (minutes * 60);
+
+        if (totalSeconds <= 0) {
+          alert("Insere um tempo válido!");
+          return;
+        }
+      }
+
+      interval = setInterval(() => {
+        totalSeconds--;
+        updateTimer();
+
+        if (totalSeconds <= 0) {
+          clearInterval(interval);
+          interval = null;
+          alert("Tempo esgotado! Verifique suas tarefas.");
+          removeCompletedTasks();
+          resetTimer();
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(interval);
+      interval = null;
+    }
+
+    function resetTimer() {
+      clearInterval(interval);
+      interval = null;
+      totalSeconds = 0;
+      updateTimer();
+    }
+
+    function updateTimer() {
+      let hours = Math.floor(totalSeconds / 3600);
+      let minutes = Math.floor((totalSeconds % 3600) / 60);
+      let seconds = totalSeconds % 60;
+
+      document.getElementById("timer").innerText =
+        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // Tarefas
+    function addTask() {
+      const taskText = document.getElementById("newTask").value.trim();
+      if (taskText === "") return;
+
+      const li = document.createElement("li");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+
+      li.appendChild(checkbox);
+      li.appendChild(document.createTextNode(" " + taskText));
+
+      document.getElementById("taskList").appendChild(li);
+      document.getElementById("newTask").value = "";
+    }
+
+    function removeCompletedTasks() {
+      const tasks = document.querySelectorAll("#taskList li");
+      tasks.forEach(task => {
+        const checkbox = task.querySelector("input[type='checkbox']");
+        if (checkbox.checked) {
+          task.remove();
+        }
+      });
+    }
+
+    // Inicia o timer a zeros
+    updateTimer();
+  </script>
+
+</body>
+</html>
